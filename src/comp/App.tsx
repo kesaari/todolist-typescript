@@ -5,12 +5,12 @@ import { Statistics } from "./Statistics";
 import { FilterButtons } from "./FilterButtons";
 import { TodoItem } from "./TodoItem";
 import styles from "./App.module.css";
-import { Todo } from './types.ts'
+import { Todo, FILTERS, Filter } from './types.ts'
 
 interface AppState {
   todos: Todo[];
   inputValue: string;
-  filter: string;
+  filter: Filter;
   editingId: number | null;
   editingText: string;
 }
@@ -21,7 +21,7 @@ class App extends Component<{}, AppState> {
     this.state = {
       todos: this.getLocalStorage(),
       inputValue: "",
-      filter: "all",
+      filter: FILTERS.ALL,
       editingId: null,
       editingText: ""
     };
@@ -36,12 +36,23 @@ class App extends Component<{}, AppState> {
     localStorage.setItem("todos", JSON.stringify(todos));
   };
 
+  filterTodos = (todos: Todo[], filter: Filter): Todo[] => {
+    return todos
+      .filter((todo) => {
+        if (filter === FILTERS.ALL) return true;
+        if (filter === FILTERS.COMPLETED) return todo.completed;
+        return !todo.completed;
+      })
+      .sort((a) => (a.completed ? 1 : -1));
+  };
+
   addTodo = (event: React.FormEvent) => {
     event.preventDefault();
-    if (this.state.inputValue) {
+    const { inputValue } = this.state;
+    if (inputValue) {
       const newTodo: Todo = {
         id: Date.now(),
-        text: this.state.inputValue,
+        text: inputValue,
         completed: false,
         birthDate: new Date()
       };
@@ -72,17 +83,17 @@ class App extends Component<{}, AppState> {
     });
   };
 
-  setFilter = (filter: string) => {
+  setFilter = (filter: Filter) => {
     this.setState({ filter });
   };
 
   editTodo = (id: number) => {
-    this.setState((prev) => {
-      const todo = prev.todos.find((todo) => todo.id === id);
+    this.setState(({ todos, editingId, editingText }) => {
+      const todo = todos.find((todo) => todo.id === id);
       if (todo) {
         return { editingId: id, editingText: todo.text };
       }
-      return prev;
+      return { editingId, editingText };
     });
   };
 
@@ -109,13 +120,10 @@ class App extends Component<{}, AppState> {
   };
 
   render() {
-    const filteredTodos = this.state.todos
-      .filter((todo) => {
-        if (this.state.filter === "all") return true;
-        if (this.state.filter === "completed") return todo.completed;
-        return !todo.completed;
-      })
-      .sort((a, b) => (a.completed ? 1 : -1));
+    
+    const { todos, inputValue, filter, editingId, editingText } = this.state;
+
+    const filteredTodos = this.filterTodos(todos, filter);
 
     return (
       <div className={styles.app}>
@@ -123,17 +131,17 @@ class App extends Component<{}, AppState> {
         <div className={styles.content}>
           <Form
             addTodo={this.addTodo}
-            inputValue={this.state.inputValue}
+            inputValue={inputValue}
             setInputValue={this.setInputValue}
           />
 
           <FilterButtons
-            filter={this.state.filter}
+            filter={filter}
             deleteCompletedTodos={this.deleteCompletedTodos}
             setFilter={this.setFilter}
           />
 
-          <Statistics todos={this.state.todos} />
+          <Statistics todos={todos} />
 
           <ul>
             {filteredTodos.map((todo) => {
@@ -143,8 +151,8 @@ class App extends Component<{}, AppState> {
                 deleteTodo: this.deleteTodo,
                 editTodo: this.editTodo,
                 saveEditedTodo: this.saveEditedTodo,
-                editingId: this.state.editingId,
-                editingText: this.state.editingText,
+                editingId: editingId,
+                editingText: editingText,
               };
 
               return (

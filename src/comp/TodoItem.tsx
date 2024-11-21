@@ -25,27 +25,31 @@ interface TodoItemState {
 class TodoItem extends Component<TodoItemProps, TodoItemState> {
   constructor(props: TodoItemProps) {
     super(props);
+    const { id, editingId, text } = props;
     this.state = {
-      editing: this.props.id === this.props.editingId,
-      inputValue: this.props.text,
+      editing: id === editingId,
+      inputValue: text,
       visibilityTooltip: false
     };
   }
 
   componentDidUpdate(prevProps: TodoItemProps) {
-    if (prevProps.editingId !== this.props.editingId) {
+    const { id, editingId, editingText, text } = this.props;
+    if (prevProps.editingId !== editingId) {
       this.setState({
-        editing: this.props.id === this.props.editingId,
-        inputValue: this.props.editingId
-          ? this.props.editingText
-          : this.props.text
+        editing: id === editingId,
+        inputValue: editingId
+          ? editingText
+          : text
       });
     }
   }
 
   handleSave = () => {
+    const { inputValue } = this.state
+    const { id, saveEditedTodo } = this.props
     this.setState({ editing: false });
-    this.props.saveEditedTodo(this.props.id, this.state.inputValue);
+    saveEditedTodo(id, inputValue);
   };
 
   handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -81,6 +85,7 @@ class TodoItem extends Component<TodoItemProps, TodoItemState> {
 
   render() {
     const { id, text, birthDate, completed } = this.props;
+    const { editing, inputValue, visibilityTooltip} = this.state
 
     return (
       <li key={id} className={completed ? styles.done : ""}>
@@ -89,9 +94,9 @@ class TodoItem extends Component<TodoItemProps, TodoItemState> {
           type="checkbox"
           checked={completed}
         />
-        {this.state.editing ? (
+        {editing ? (
           <input
-            value={this.state.inputValue}
+            value={inputValue}
             onChange={this.handleInput}
             onKeyDown={this.handleKeyDown}
             onBlur={this.handleSave}
@@ -105,7 +110,7 @@ class TodoItem extends Component<TodoItemProps, TodoItemState> {
           >
             <div className={styles.todo} onClick={this.edit(id)}>
               {text}
-              {this.state.visibilityTooltip && (
+              {visibilityTooltip && (
                 <div className={styles.tooltip}>
                   {formatDistanceToNow(new Date(birthDate), {
                     addSuffix: true,

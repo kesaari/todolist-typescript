@@ -1,26 +1,28 @@
 import { Component } from "react";
 import styles from "./App.module.css";
+import { FILTERS, Filter } from './types.ts'
 
 interface FilterButton {
-  value: string;
+  value: Filter;
   text: string;
 }
 
 interface FilterButtonsProps {
-  filter: string;
-  setFilter: (value: string) => void;
+  filter: Filter;
+  setFilter: (value: Filter) => void;
   deleteCompletedTodos: () => void;
 }
 
 class FilterButtons extends Component<FilterButtonsProps> {
   buttons: FilterButton[] = [
-    { value: "all", text: "Все задачи" },
-    { value: "completed", text: "Завершенные" },
-    { value: "incomplete", text: "В процессе" }
+    { value: FILTERS.ALL, text: "Все задачи" },
+    { value: FILTERS.COMPLETED, text: "Завершенные" },
+    { value: FILTERS.INCOMPLETE, text: "В процессе" }
   ];
 
-  handleFilter = (value: string) => () => {
-    this.props.setFilter(value);
+  handleFilter = (value: Filter) => () => {
+    const { setFilter } = this.props
+    setFilter(value);
   };
 
   render() {
@@ -36,7 +38,7 @@ class FilterButtons extends Component<FilterButtonsProps> {
             {button.text}
           </button>
         ))}
-        {filter === "completed" && (
+        {filter === FILTERS.COMPLETED && (
           <button
             className={styles.clearBtn}
             onClick={deleteCompletedTodos}

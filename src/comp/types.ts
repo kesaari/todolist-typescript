@@ -4,3 +4,12 @@ export interface Todo {
     completed: boolean;
     birthDate: Date;
   }
+
+  export const FILTERS = {
+    ALL: "all",
+    COMPLETED: "completed",
+    INCOMPLETE: "incomplete"
+  } as const;
+  
+  export type Filter = typeof FILTERS[keyof typeof FILTERS];
+  

@@ -8,8 +8,10 @@ interface FormProps {
 }
 
 class Form extends Component<FormProps, {}> {
+
   handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.setInputValue(event.target.value);
+    const { setInputValue } = this.props
+    setInputValue(event.target.value);
   };
 
   render() {
