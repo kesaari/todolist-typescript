@@ -7,13 +7,13 @@ interface FilterButton {
   text: string;
 }
 
-interface FilterButtonsProps {
+interface Props {
   filter: Filter;
   setFilter: (value: Filter) => void;
   deleteCompletedTodos: () => void;
 }
 
-class FilterButtons extends Component<FilterButtonsProps> {
+class FilterButtons extends Component<Props> {
   buttons: FilterButton[] = [
     { value: FILTERS.ALL, text: "Все задачи" },
     { value: FILTERS.COMPLETED, text: "Завершенные" },

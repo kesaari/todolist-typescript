@@ -7,7 +7,7 @@ import { TodoItem } from "./TodoItem";
 import styles from "./App.module.css";
 import { Todo, FILTERS, Filter } from './types.ts'
 
-interface AppState {
+interface State {
   todos: Todo[];
   inputValue: string;
   filter: Filter;
@@ -15,7 +15,7 @@ interface AppState {
   editingText: string;
 }
 
-class App extends Component<{}, AppState> {
+class App extends Component<{}, State> {
   constructor(props: {}) {
     super(props);
     this.state = {

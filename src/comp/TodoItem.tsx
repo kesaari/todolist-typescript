@@ -3,7 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import styles from "./App.module.css";
 
-interface TodoItemProps {
+interface Props {
   id: number;
   text: string;
   birthDate: Date;
@@ -16,14 +16,14 @@ interface TodoItemProps {
   editingText: string;
 }
 
-interface TodoItemState {
+interface State {
   editing: boolean;
   inputValue: string;
   visibilityTooltip: boolean;
 }
 
-class TodoItem extends Component<TodoItemProps, TodoItemState> {
-  constructor(props: TodoItemProps) {
+class TodoItem extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     const { id, editingId, text } = props;
     this.state = {
@@ -33,7 +33,7 @@ class TodoItem extends Component<TodoItemProps, TodoItemState> {
     };
   }
 
-  componentDidUpdate(prevProps: TodoItemProps) {
+  componentDidUpdate(prevProps: Props) {
     const { id, editingId, editingText, text } = this.props;
     if (prevProps.editingId !== editingId) {
       this.setState({

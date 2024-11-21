@@ -2,11 +2,11 @@ import { Component } from "react";
 import styles from "./App.module.css";
 import { Todo } from './types.ts'
 
-interface StatisticsProps {
+interface Props {
   todos: Todo[];
 }
 
-class Statistics extends Component<StatisticsProps> {
+class Statistics extends Component<Props> {
   render() {
     const { todos } = this.props;
     const counter = todos.length;
