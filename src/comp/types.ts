@@ -6,9 +6,9 @@ export interface Todo {
   }
 
   export const FILTERS = {
-    ALL: "all",
-    COMPLETED: "completed",
-    INCOMPLETE: "incomplete"
+    ALL: "ALL",
+    COMPLETED: "COMPLETED",
+    INCOMPLETED: "INCOMPLETED"
   } as const;
   
   export type Filter = typeof FILTERS[keyof typeof FILTERS];

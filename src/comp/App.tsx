@@ -5,7 +5,9 @@ import { Statistics } from "./Statistics";
 import { FilterButtons } from "./FilterButtons";
 import { TodoItem } from "./TodoItem";
 import styles from "./App.module.css";
-import { Todo, FILTERS, Filter } from './types.ts'
+import { Todo, FILTERS, Filter } from './types'
+import { filterTodos } from "./selectors";
+
 
 interface State {
   todos: Todo[];
@@ -15,8 +17,10 @@ interface State {
   editingText: string;
 }
 
-class App extends Component<{}, State> {
-  constructor(props: {}) {
+interface Props {}
+
+class App extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       todos: this.getLocalStorage(),
@@ -36,16 +40,6 @@ class App extends Component<{}, State> {
     localStorage.setItem("todos", JSON.stringify(todos));
   };
 
-  filterTodos = (todos: Todo[], filter: Filter): Todo[] => {
-    return todos
-      .filter((todo) => {
-        if (filter === FILTERS.ALL) return true;
-        if (filter === FILTERS.COMPLETED) return todo.completed;
-        return !todo.completed;
-      })
-      .sort((a) => (a.completed ? 1 : -1));
-  };
-
   addTodo = (event: React.FormEvent) => {
     event.preventDefault();
     const { inputValue } = this.state;
@@ -60,7 +54,7 @@ class App extends Component<{}, State> {
       this.setState((prev) => {
         const updatedTodos = [...prev.todos, newTodo];
         this.updateLocalStorage(updatedTodos);
-        return { todos: updatedTodos, inputValue: "" };
+        return { ...prev, todos: updatedTodos, inputValue: "" };
       });
     }
   };
@@ -71,7 +65,7 @@ class App extends Component<{}, State> {
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       );
       this.updateLocalStorage(updatedTodos);
-      return { todos: updatedTodos };
+      return { ...prev, todos: updatedTodos };
     });
   };
 
@@ -79,7 +73,7 @@ class App extends Component<{}, State> {
     this.setState((prev) => {
       const updatedTodos = prev.todos.filter((todo) => todo.id !== id);
       this.updateLocalStorage(updatedTodos);
-      return { todos: updatedTodos };
+      return { ...prev, todos: updatedTodos };
     });
   };
 
@@ -103,7 +97,7 @@ class App extends Component<{}, State> {
         todo.id === id ? { ...todo, text } : todo
       );
       this.updateLocalStorage(updatedTodos);
-      return { todos: updatedTodos, editingId: null, editingText: "" };
+      return { ...prev, todos: updatedTodos, editingId: null, editingText: "" };
     });
   };
 
@@ -111,7 +105,7 @@ class App extends Component<{}, State> {
     this.setState((prev) => {
       const updatedTodos = prev.todos.filter((todo) => !todo.completed);
       this.updateLocalStorage(updatedTodos);
-      return { todos: updatedTodos, filter: "all" };
+      return { ...prev, todos: updatedTodos, filter: FILTERS.ALL };
     });
   };
 
@@ -123,7 +117,7 @@ class App extends Component<{}, State> {
     
     const { todos, inputValue, filter, editingId, editingText } = this.state;
 
-    const filteredTodos = this.filterTodos(todos, filter);
+    const filteredTodos = filterTodos(todos, filter);
 
     return (
       <div className={styles.app}>

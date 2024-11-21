@@ -1,6 +1,7 @@
 import { Component } from "react";
 import styles from "./App.module.css";
-import { FILTERS, Filter } from './types.ts'
+import { FILTERS, Filter } from './types.ts';
+import cn from 'classnames';
 
 interface FilterButton {
   value: Filter;
@@ -17,7 +18,7 @@ class FilterButtons extends Component<Props> {
   buttons: FilterButton[] = [
     { value: FILTERS.ALL, text: "Все задачи" },
     { value: FILTERS.COMPLETED, text: "Завершенные" },
-    { value: FILTERS.INCOMPLETE, text: "В процессе" }
+    { value: FILTERS.INCOMPLETED, text: "В процессе" }
   ];
 
   handleFilter = (value: Filter) => () => {
@@ -32,7 +33,9 @@ class FilterButtons extends Component<Props> {
         {this.buttons.map((button) => (
           <button
             key={button.value}
-            className={filter === button.value ? styles.active : ""}
+            className={cn({
+              [styles.active]: filter === button.value
+            })}
             onClick={this.handleFilter(button.value)}
           >
             {button.text}

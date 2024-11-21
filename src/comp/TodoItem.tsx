@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import styles from "./App.module.css";
+import cn from 'classnames';
 
 interface Props {
   id: number;
@@ -88,7 +89,11 @@ class TodoItem extends Component<Props, State> {
     const { editing, inputValue, visibilityTooltip} = this.state
 
     return (
-      <li key={id} className={completed ? styles.done : ""}>
+      <li key={id} 
+      className={cn({
+        [styles.done]: completed
+      })}
+      >
         <input
           onChange={this.handleStatus(id)}
           type="checkbox"
